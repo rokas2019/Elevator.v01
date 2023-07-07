@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Elevator Screen</title>
+    <style>
+        body {
+            background-color: #0009;
+            color: #fff;
+            margin: 0;
+        }
+
+        #screen-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 20px;
+        }
+
+        #image-screen-container {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #image-screen {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #arrow-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+        #time-box {
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .level-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .level-button {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .selected {
+            background-color: #000;
+            color: #fff;
+        }
+    </style>
+    <script>
+        var currentLevel = null;
+        var isMoving = false;
+
+        function showLevel(levelId) {
+            var levelButtons = document.getElementsByClassName('level-button');
+            for (var i = 0; i < levelButtons.length; i++) {
+                levelButtons[i].classList.remove('selected');
+            }
+
+            var selectedLevelButton = document.getElementById('level-button-' + levelId);
+            selectedLevelButton.classList.add('selected');
+
+            var imageScreen = document.getElementById('image-screen');
+            var arrowImage = document.getElementById('arrow-image');
+            var timeBox = document.getElementById('time-box');
+
+            timeBox.textContent = "{{ current_time }}";
+
+            if (levelId === currentLevel) {
+                return; // Do nothing if the same button is pressed twice
+            }
+
+            if (!isMoving) {
+                if (levelId === 0) {
+                    arrowImage.style.display = 'none';
+                } else {
+                    arrowImage.style.display = 'block';
+                    arrowImage.src = levelId < currentLevel ? "{% static 'images/arrow_down.gif' %}" : "{% static 'images/arrow_up.gif' %}";
+                    imageScreen.style.display = 'none'; // Hide the floor image while arrow gif is displayed
+                }
+
+                isMoving = true;
+
+                setTimeout(function() {
+                    arrowImage.style.display = 'none';
+                    imageScreen.style.display = 'block'; // Show the floor image
+                    imageScreen.src = "{% static 'images/floor' %}" + levelId + ".png"; // Display the level image
+                    currentLevel = levelId;
+                    isMoving = false;
+                }, 3000);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="screen-container">
+        <div id="image-screen-container">
+            <img id="image-screen" src="{% static 'images/floor8.png' %}" alt="Default Image">
+            <img id="arrow-image" src="{% static 'images/arrow_up.gif' %}" alt="Arrow Image">
+        </div>
+        <div id="time-box">{{ current_time }}</div>
+        <div class="level-buttons">
+            {% for level in levels %}
+                {% if level.pk == 0 %}
+                    <button id="level-button-{{ level.pk }}" class="level-button" onclick="showLevel({{ level.pk }})">
+                        {{ level }}
+                    </button>
+                {% endif %}
+            {% endfor %}
+            {% for level in levels %}
+                {% if level.pk != 0 %}
+                    <button id="level-button-{{ level.pk }}" class="level-button" onclick="showLevel({{ level.pk }})">
+                        {{ level }}
+                    </button>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% block content %}
+    {% for level in levels %}
+        <h1>Level: {{ level.get_level_display }}</h1>
+        {% if level.level_image %}
+            <img src="{{ level.level_image.url }}">
+        {% else %}
+            <p>No image available</p>
+        {% endif %}
+        <button onclick="location.href='{% url 'level_detail' level.pk %}'">View Details</button>
+        <br><br>
+    {% endfor %}
+
+
+
+        <h1>Level: {{ level.get_level_display }}</h1>
+    {% if level.level_image %}
+        <img src="{{ level.level_image.url }}">
+    {% else %}
+        <p>No image available</p>
+    {% endif %}
+        <img src="{% static 'images/giphy.gif' %}">
+    {% endblock content%}
+</body>
+</html>
