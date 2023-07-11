@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+from .forms import LevelForm
 from .models import Screen, Level, CurrentTime, Arrow
 
 
@@ -26,3 +28,34 @@ def levels_list(request):
 def level_detail(request, pk):
     level = Level.objects.get(pk=pk)
     return render(request, 'level_detail.html', {'level': level})
+
+
+def level_create(request):
+    if request.method == 'POST':
+        form = LevelForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('levels_list')
+    else:
+        form = LevelForm()
+    return render(request, 'level_form.html', {'form': form})
+
+
+def level_update(request, pk):
+    level = Level.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = LevelForm(request.POST, request.FILES, instance=level)
+        if form.is_valid():
+            form.save()
+            return redirect('levels_list')
+    else:
+        form = LevelForm(instance=level)
+    return render(request, 'level_form.html', {'form': form, 'level': level})
+
+
+def level_delete(request, pk):
+    level = Level.objects.get(pk=pk)
+    if request.method == 'POST':
+        level.delete()
+        return redirect('levels_list')
+    return render(request, 'level_confirm_delete.html', {'level': level})

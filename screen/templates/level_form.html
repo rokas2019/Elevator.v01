@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Level Form</title>
+</head>
+<body>
+    <h1>Level Form</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if level %}
+            <input type="hidden" name="id" value="{{ level.id }}">
+        {% endif %}
+        <div>
+            <label for="{{ form.level.id_for_label }}">Level:</label>
+            {{ form.level }}
+        </div>
+        <div>
+            <label for="{{ form.image.id_for_label }}">Image:</label>
+            {{ form.image }}
+        </div>
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>
