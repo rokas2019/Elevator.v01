@@ -5,6 +5,5 @@
 
 "# Near future updates"
 - Local time display
-- CRUD screen to easily change media
 - Django Channels and WebSockets
 - Front-End updates
